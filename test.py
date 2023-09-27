@@ -1,0 +1,92 @@
+import random
+import numpy as np
+import pytest
+from constants import *
+from util import *
+from calc import *
+import math
+
+
+def get_random_x():
+    tmp1 = random.random()
+    tmp2 = tmp1 * (b-a) + a
+    return tmp2
+
+
+def test_encode_decode():
+    for _ in range(test_N):
+        tmp1 = get_random_x()
+        e1 = encode_a_b(tmp1)
+        d1 = decode_a_b(e1)
+        assert math.isclose(tmp1, d1, rel_tol=tolerance)
+
+
+def test_sum():
+    for _ in range(test_N):
+        x1 = get_random_x()
+        x2 = get_random_x()
+        e1 = encode_a_b(x1)
+        e2 = encode_a_b(x2)
+        e_add = e1 + e2
+        ans = x1 + x2
+        if (ans > a) or (ans < b):
+            assert True
+        else:
+            d_add = decode_a_b(e_add)
+            assert math.isclose(d_add, ans, rel_tol=tolerance)
+
+
+def test_sub():
+    for _ in range(test_N):
+        x1 = get_random_x()
+        x2 = get_random_x()
+        e1 = encode_a_b(x1)
+        e2 = encode_a_b(x2)
+        e_sub = e1 - e2
+        ans = x1 - x2
+        if (ans > a) or (ans < b):
+            assert True
+        else:
+            d = decode_a_b(e_sub)
+            assert math.isclose(d, ans, rel_tol=tolerance)
+
+
+def test_pbs():
+    for _ in range(test_N):
+        lut = create_lut(f_identity)
+        x = get_random_x()
+        e1 = encode_a_b(x)
+        tmp1 = pbs(e1, lut)
+        tmp2 = decode_a_b(tmp1)
+        flag1 = math.isclose(tmp2, f_identity(x), rel_tol=tolerance)
+        flag2 = math.isclose(tmp2, f_identity(x), abs_tol=abs_tol)
+        assert flag1 or flag2
+
+
+def test_uint8_encode_decode():
+    for _ in range(test_N):
+        x = random.randint(0, (1 << 32) - 1)
+        tmp = int32_to_uint8_array(x)
+        tmp2 = uint8_array_to_int32(tmp)
+        assert x == tmp2
+
+
+def test_mult():
+    for _ in range(test_N):
+        lut = create_lut(f_square_by_4)
+        x1 = get_random_x() / pow(2, 2)
+        x2 = get_random_x() / pow(2, 2)
+        if (x1*x2 > b) or (x1*x2 < a):
+            assert True
+        else:
+            e1 = encode_a_b(x1)
+            e2 = encode_a_b(x2)
+            tmp1 = e1 + e2
+            tmp2 = e1 - e2
+            tmp3 = pbs(tmp1, lut)
+            tmp4 = pbs(tmp2, lut)
+            tmp5 = tmp3 - tmp4
+            tmp6 = decode_a_b(tmp5)
+            flag1 = math.isclose(tmp6, x1*x2, rel_tol=tolerance)
+            flag2 = math.isclose(tmp6, x1*x2, abs_tol=abs_tol)
+            assert flag1 or flag2
