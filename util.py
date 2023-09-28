@@ -148,7 +148,7 @@ if __name__ == "__main__":
 
     lut = create_lut(f_square_by_4)
     tmp = lut_to_uint8_array(lut)
-    uint8_array_to_file(tmp, "tmp.txt")
+    uint8_array_to_file(tmp, "lut.txt")
     quit()
     x1 = get_random_x() / pow(2, 2)
     x2 = get_random_x() / pow(2, 2)
