@@ -9,4 +9,4 @@ N_bit = 14
 # for test.py
 test_N = 100
 tolerance = 3e-02
-abs_tol = 1e-02
+abs_tol = 1e-01

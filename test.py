@@ -2,9 +2,11 @@ import random
 import numpy as np
 import pytest
 from constants import *
+import constants
 from util import *
 from calc import *
 import math
+import functools
 
 
 def get_random_x():
@@ -51,7 +53,7 @@ def test_sub():
             assert math.isclose(d, ans, rel_tol=tolerance)
 
 
-def test_pbs():
+def test_identity_pbs():
     for _ in range(test_N):
         lut = create_lut(f_identity)
         x = get_random_x()
@@ -62,6 +64,85 @@ def test_pbs():
         flag2 = math.isclose(tmp2, f_identity(x), abs_tol=abs_tol)
         assert flag1 or flag2
 
+def test_scalar_add_pbs():
+    for _ in range(test_N):
+        s = random.random()
+        lut = create_lut(functools.partial(f_scalar_add, a=s))
+        x = get_random_x()
+        e1 = encode_a_b(x)
+        tmp1 = pbs(e1, lut)
+        tmp2 = decode_a_b(tmp1)
+
+        ans = f_scalar_add(x, s)
+        if ans < constants.a or ans > constants.b:
+          assert True
+          continue
+        
+        #print(f"ans: {ans}")
+        #print(f"dec: {tmp2}")
+        flag1 = math.isclose(tmp2, ans, rel_tol=tolerance)
+        flag2 = math.isclose(tmp2, ans, abs_tol=abs_tol)
+        assert flag1 or flag2
+
+def test_scalar_sub_pbs():
+    for _ in range(test_N):
+        s = random.random()
+        lut = create_lut(functools.partial(f_scalar_sub, a=s))
+        x = get_random_x()
+        e1 = encode_a_b(x)
+        tmp1 = pbs(e1, lut)
+        tmp2 = decode_a_b(tmp1)
+
+        ans = f_scalar_sub(x, s)
+        if ans < constants.a or ans > constants.b:
+          assert True
+          continue
+        
+        #print(f"ans: {ans}")
+        #print(f"dec: {tmp2}")
+        flag1 = math.isclose(tmp2, ans, rel_tol=tolerance)
+        flag2 = math.isclose(tmp2, ans, abs_tol=abs_tol)
+        assert flag1 or flag2
+
+def test_scalar_mult_pbs():
+    for _ in range(test_N):
+        s = random.random()
+        lut = create_lut(functools.partial(f_scalar_mult, a=s))
+        x = get_random_x()
+        e1 = encode_a_b(x)
+        tmp1 = pbs(e1, lut)
+        tmp2 = decode_a_b(tmp1)
+
+        ans = f_scalar_mult(x, s)
+        if ans < constants.a or ans > constants.b:
+          assert True
+          continue
+        
+        #print(f"ans: {ans}")
+        #print(f"dec: {tmp2}")
+        flag1 = math.isclose(tmp2, ans, rel_tol=tolerance)
+        flag2 = math.isclose(tmp2, ans, abs_tol=abs_tol)
+        assert flag1 or flag2
+
+def test_scalar_div_pbs():
+    for _ in range(test_N):
+        s = random.random()
+        lut = create_lut(functools.partial(f_scalar_div, a=s))
+        x = get_random_x()
+        e1 = encode_a_b(x)
+        tmp1 = pbs(e1, lut)
+        tmp2 = decode_a_b(tmp1)
+
+        ans = f_scalar_div(x, s)
+        if ans < constants.a or ans > constants.b:
+          assert True
+          continue
+        
+        #print(f"ans: {ans}")
+        #print(f"dec: {tmp2}")
+        flag1 = math.isclose(tmp2, ans, rel_tol=tolerance)
+        flag2 = math.isclose(tmp2, ans, abs_tol=abs_tol)
+        assert flag1 or flag2
 
 def test_uint8_encode_decode():
     for _ in range(test_N):
@@ -90,3 +171,7 @@ def test_mult():
             flag1 = math.isclose(tmp6, x1*x2, rel_tol=tolerance)
             flag2 = math.isclose(tmp6, x1*x2, abs_tol=abs_tol)
             assert flag1 or flag2
+
+if __name__ == "__main__":
+  print("hello, world")
+  test_scalar_add_pbs()

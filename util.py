@@ -82,6 +82,17 @@ def create_lut(f):
 def f_identity(x):
     return x
 
+def f_scalar_add(x, a):
+    return x + a
+
+def f_scalar_sub(x, a):
+    return x - a
+
+def f_scalar_mult(x, a):
+    return x * a
+
+def f_scalar_div(x, a):
+    return x / a
 
 def f_relu(x):
     if x > 0:
