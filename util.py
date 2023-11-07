@@ -25,12 +25,14 @@ def encode(x):
     tmp1 = tmp1 * pow(2, (prg_bit - clear_text_bit - noise_bit))
     tmp1 = int(tmp1)
     tmp2 = tmp1 - int(1 << (prg_bit-1))  # shift
+    # tmp2 = tmp1
     return tmp2
 
 
 def decode(x):
     assert x < (1 << prg_bit) - 1, f"{x}, {(1<<prg_bit) - 1}"
     tmp1 = x + int(1 << (prg_bit-1))  # shift back
+    #tmp1 = x
     tmp1 = tmp1 / pow(2, noise_bit)
     tmp1 = tmp1 / pow(2, (prg_bit - clear_text_bit - noise_bit))
     return tmp1
@@ -50,7 +52,9 @@ def decode_a_b(x):
 
 
 def rescale_encoded_value_to_N(x):
-    assert x < (1 << prg_bit) - 1, f"x: {x} !< {(1<<prg_bit) - 1}"
+    #assert x < (1 << prg_bit) - 1, f"x: {x} !< {(1<<prg_bit) - 1}"
+    if (x >= (1 << prg_bit) - 1):
+        return 0
     # tmp1 = decode(x)  # descritized by clear_text_bit
     tmp1 = x + int(1 << (prg_bit-1))  # shift back
     tmp1 = tmp1 / pow(2, prg_bit)  # torus

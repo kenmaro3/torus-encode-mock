@@ -31,11 +31,13 @@ def test_sum():
         e2 = encode_a_b(x2)
         e_add = e1 + e2
         ans = x1 + x2
-        if (ans > a) or (ans < b):
+        d = decode_a_b(e_add)
+        print(f"and: {ans}")
+        print(f"dec: {d}")
+        if (ans < a) or (ans > b):
             assert True
         else:
-            d_add = decode_a_b(e_add)
-            assert math.isclose(d_add, ans, rel_tol=tolerance)
+            assert math.isclose(d, ans, rel_tol=tolerance)
 
 
 def test_sub():
@@ -46,10 +48,12 @@ def test_sub():
         e2 = encode_a_b(x2)
         e_sub = e1 - e2
         ans = x1 - x2
-        if (ans > a) or (ans < b):
+        d = decode_a_b(e_sub)
+        print(f"and: {ans}")
+        print(f"dec: {d}")
+        if (ans < a) or (ans > b):
             assert True
         else:
-            d = decode_a_b(e_sub)
             assert math.isclose(d, ans, rel_tol=tolerance)
 
 
@@ -151,13 +155,32 @@ def test_uint8_encode_decode():
         tmp2 = uint8_array_to_int32(tmp)
         assert x == tmp2
 
+def test_square_div_4_pbs():
+    for _ in range(test_N):
+        lut = create_lut(functools.partial(f_square_by_4))
+        x = get_random_x() / pow(2, 2)
+        e1 = encode_a_b(x)
+        tmp1 = pbs(e1, lut)
+        tmp2 = decode_a_b(tmp1)
+
+        ans = f_square_by_4(x)
+        if ans < constants.a or ans > constants.b:
+          assert True
+          continue
+        
+        #print(f"ans: {ans}")
+        #print(f"dec: {tmp2}")
+        flag1 = math.isclose(tmp2, ans, rel_tol=tolerance)
+        flag2 = math.isclose(tmp2, ans, abs_tol=abs_tol)
+        assert flag1 or flag2
+
 
 def test_mult():
     for _ in range(test_N):
         lut = create_lut(f_square_by_4)
         x1 = get_random_x() / pow(2, 2)
         x2 = get_random_x() / pow(2, 2)
-        if (x1*x2 > b) or (x1*x2 < a):
+        if (x1*x2 >= b) or (x1*x2 <= a):
             assert True
         else:
             e1 = encode_a_b(x1)
@@ -168,10 +191,18 @@ def test_mult():
             tmp4 = pbs(tmp2, lut)
             tmp5 = tmp3 - tmp4
             tmp6 = decode_a_b(tmp5)
-            flag1 = math.isclose(tmp6, x1*x2, rel_tol=tolerance)
-            flag2 = math.isclose(tmp6, x1*x2, abs_tol=abs_tol)
+            ans = x1 * x2
+
+            print(f"(x1, x2): ({x1}, {x2})")
+            print(f"ans: {ans}")
+            print(f"dec: {tmp6}")
+            flag1 = math.isclose(tmp6, ans, rel_tol=tolerance)
+            flag2 = math.isclose(tmp6, ans, abs_tol=abs_tol)
             assert flag1 or flag2
 
 if __name__ == "__main__":
   print("hello, world")
-  test_scalar_add_pbs()
+  #test_scalar_add_pbs()
+#   test_square_div_4_pbs()
+#   print("\nokay===")
+  test_mult()
