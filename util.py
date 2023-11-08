@@ -1,6 +1,19 @@
 import numpy as np
 from constants import *
 
+def get_a_b_discritised_by_n():
+    return np.linspace(a, b, 1 << N_bit)
+
+def convert_a_b_in_sign_form(original=None):
+    if original is None:
+        original = np.linspace(a, b, 1 << N_bit)
+    res = np.zeros(len(original))
+    res[:len(original)//2] = original[len(original)//2:]
+    tmp = original[:len(original)//2]
+    res[len(original)//2:] = tmp
+    return res
+
+
 
 def int32_to_uint8_array(x):
     res = []
@@ -56,7 +69,8 @@ def rescale_encoded_value_to_N(x):
     if (x >= (1 << prg_bit) - 1):
         return 0
     # tmp1 = decode(x)  # descritized by clear_text_bit
-    tmp1 = x + int(1 << (prg_bit-1))  # shift back
+    # tmp1 = x + int(1 << (prg_bit-1))  # shift back
+    tmp1 = x
     tmp1 = tmp1 / pow(2, prg_bit)  # torus
     tmp2 = tmp1 * pow(2, N_bit)
     return int(tmp2)
@@ -77,7 +91,8 @@ def pbs(x, lut):
 
 
 def create_lut(f):
-    tmp1 = np.linspace(a, b, 1 << N_bit)
+    tmp1 = convert_a_b_in_sign_form()
+    #tmp1 = np.linspace(a, b, 1 << N_bit)
     tmp2 = np.array([f(el) for el in tmp1])
     tmp3 = [encode_a_b(el) for el in tmp2]
     return tmp3
@@ -132,6 +147,8 @@ def lut_to_uint8_array(x):
     return res
 
 
+
+
 if __name__ == "__main__":
     # x = 3
     # print(f"x: {x}")
@@ -154,6 +171,9 @@ if __name__ == "__main__":
     # ans = f_square_by_4(x)
 
     # print(f"ans: {ans}")
+    tmp = convert_a_b_in_sign_form()
+    print(tmp)
+    # quit()
     import random
 
     def get_random_x():

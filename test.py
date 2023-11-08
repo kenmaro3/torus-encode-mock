@@ -201,8 +201,10 @@ def test_mult():
             assert flag1 or flag2
 
 if __name__ == "__main__":
-  print("hello, world")
-  #test_scalar_add_pbs()
-#   test_square_div_4_pbs()
-#   print("\nokay===")
-  test_mult()
+    print("hello, world")
+    #test_scalar_add_pbs()
+    #   test_square_div_4_pbs()
+    #   print("\nokay===")
+    test_identity_pbs()
+
+    #test_mult()
