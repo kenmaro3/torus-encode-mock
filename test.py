@@ -29,15 +29,24 @@ def test_sum():
         x2 = get_random_x()
         e1 = encode_a_b(x1)
         e2 = encode_a_b(x2)
-        e_add = e1 + e2
+        e_add = plain_add(e1, e2)
         ans = x1 + x2
         d = decode_a_b(e_add)
-        print(f"and: {ans}")
+
+        print(f"x1: {x1}")
+        print(f"x2: {x2}")
+        # if (ans < a) or (ans > b):
+        #     assert True
+        if (ans > b):
+            ans = ans - 20
+        elif (ans < a):
+            ans = ans + 20
+
+        print(f"ans: {ans}")
         print(f"dec: {d}")
-        if (ans < a) or (ans > b):
-            assert True
-        else:
-            assert math.isclose(d, ans, rel_tol=tolerance)
+        print()
+
+        assert math.isclose(d, ans, rel_tol=tolerance)
 
 
 def test_sub():
@@ -46,15 +55,19 @@ def test_sub():
         x2 = get_random_x()
         e1 = encode_a_b(x1)
         e2 = encode_a_b(x2)
-        e_sub = e1 - e2
+
+        e_sub = plain_sub(e1, e2)
         ans = x1 - x2
         d = decode_a_b(e_sub)
-        print(f"and: {ans}")
-        print(f"dec: {d}")
-        if (ans < a) or (ans > b):
-            assert True
-        else:
-            assert math.isclose(d, ans, rel_tol=tolerance)
+        # print(f"and: {ans}")
+        # print(f"dec: {d}")
+        # if (ans < a) or (ans > b):
+        #     assert True
+        if (ans > b):
+            ans = ans - 20
+        elif (ans < a):
+            ans = ans + 20
+        assert math.isclose(d, ans, rel_tol=tolerance)
 
 
 def test_identity_pbs():
@@ -185,11 +198,14 @@ def test_mult():
         else:
             e1 = encode_a_b(x1)
             e2 = encode_a_b(x2)
-            tmp1 = e1 + e2
-            tmp2 = e1 - e2
+            #tmp1 = e1 + e2
+            tmp1 = plain_add(e1, e2)
+            #tmp2 = e1 - e2
+            tmp2 = plain_sub(e1, e2)
             tmp3 = pbs(tmp1, lut)
             tmp4 = pbs(tmp2, lut)
-            tmp5 = tmp3 - tmp4
+            #tmp5 = tmp3 - tmp4
+            tmp5 = plain_sub(tmp3, tmp4)
             tmp6 = decode_a_b(tmp5)
             ans = x1 * x2
 
@@ -205,6 +221,7 @@ if __name__ == "__main__":
     #test_scalar_add_pbs()
     #   test_square_div_4_pbs()
     #   print("\nokay===")
-    test_identity_pbs()
-
+    #test_identity_pbs()
     #test_mult()
+    test_sum()
+

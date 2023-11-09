@@ -1,6 +1,36 @@
 import numpy as np
 from constants import *
 
+def check_with_while(x):
+    if (x > b):
+        while(x > b):
+            x -= 20
+    elif(x < a):
+        while(x < a):
+            x += 20
+    else:
+        pass
+    return x
+
+
+def plain_add(e1, e2):
+    e_add = e1 + e2
+    if(e_add > (1<<31)):
+        e_add = e_add - (1<<32)
+    elif(e_add < (-1<<31)):
+        e_add = e_add + (1<<32)
+    return e_add
+
+def plain_sub(e1, e2):
+    e_sub = e1 - e2
+    if(e_sub > (1<<31)):
+        e_sub = e_sub - (1<<32)
+    elif(e_sub < (-1<<31)):
+        e_sub = e_sub + (1<<32)
+    
+    return e_sub
+
+
 def get_a_b_discritised_by_n():
     return np.linspace(a, b, 1 << N_bit)
 
@@ -52,6 +82,8 @@ def decode(x):
 
 
 def encode_a_b(x):
+    x = check_with_while(x)
+
     tmp1 = (x-a)/(b-a)  # torus
     tmp2 = tmp1 * (1 << clear_text_bit)  # descritised torus
     return encode(tmp2)
